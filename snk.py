@@ -228,7 +228,11 @@ def main(stdscr):
             snake.move()
         if snake.hit(): score += 1
         if snake.crash(): break
-        time.sleep(speed.get())
+        timing = speed.get()
+        # Időzítés korrekciója:
+        if snake.direction == y_p or snake.direction == y_m:
+            timing = timing * ((curses.LINES / curses.COLS) + 1)
+        time.sleep(timing)
     while True:
         go_msg = " Game over! Score: " + str(score) + " "
         stdscr.addstr((curses.LINES // 2) + 1,
