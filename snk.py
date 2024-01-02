@@ -52,15 +52,15 @@ class Snake:
     def __init__(self,
                  arena_min,
                  arena_max,
-                 body_len=5,
                  use_barrier=True,
                  barrier_min_num=3,
-                 barrier_max_num=4,
+                 barrier_max_num=5,
                  barrier_min_len=8,
                  barrier_max_len=16,
-                 barrier_margin=2,
+                 barrier_margin=1,
                  apples_min=1,
-                 apples_max=3):
+                 apples_max=3,
+                 body_len=5):
         self.arena_min = arena_min
         self.arena_max = arena_max
         self.body = make_line(self.direction, arena_min, body_len)
@@ -88,7 +88,8 @@ class Snake:
                     barrier_max_len, barrier_margin):
         barrier_margin = abs(barrier_margin)
         snake = self.body + make_line(
-            self.direction, next_point(self.direction, self.get_head()), 10)
+            self.direction, next_point(self.direction, self.get_head()),
+            len(self.body) * 2)
         area_min = Point(self.arena_min.x + barrier_margin,
                          self.arena_min.y + barrier_margin)
         area_max = Point(self.arena_max.x - barrier_margin,
@@ -195,7 +196,11 @@ def main(stdscr):
     score = 0
     race = Toggle((True, False))
     speed = Toggle((0.06, 0.05, 0.04, 0.03))
-    snake = Snake(Point(0, 0), Point(curses.COLS - 1, curses.LINES - 1))
+    shorter = min(curses.COLS, curses.LINES)
+    snake = Snake(Point(0, 0),
+                  Point(curses.COLS - 1, curses.LINES - 1),
+                  barrier_min_len=shorter // 4,
+                  barrier_max_len=shorter // 2)
     curses.curs_set(0)
     curses.noecho()
     while True:
@@ -212,9 +217,12 @@ def main(stdscr):
             pass
         if not race.get():
             paused_msg = " Paused. Score: " + str(score) + " "
-            stdscr.addstr((curses.LINES // 2) + 1,
-                          (curses.COLS // 2) - (len(paused_msg) // 2),
-                          paused_msg, curses.A_REVERSE)
+            try:
+                stdscr.addstr((curses.LINES // 2) + 1,
+                              (curses.COLS // 2) - (len(paused_msg) // 2),
+                              paused_msg, curses.A_REVERSE)
+            except curses.error:
+                pass
         press = stdscr.getch()
         if press == curses.KEY_RESIZE: return
         if press == KEY_SPACE: race.toggle()
@@ -235,9 +243,12 @@ def main(stdscr):
         time.sleep(timing)
     while True:
         go_msg = " Game over! Score: " + str(score) + " "
-        stdscr.addstr((curses.LINES // 2) + 1,
-                      (curses.COLS // 2) - (len(go_msg) // 2), go_msg,
-                      curses.A_REVERSE)
+        try:
+            stdscr.addstr((curses.LINES // 2) + 1,
+                          (curses.COLS // 2) - (len(go_msg) // 2), go_msg,
+                          curses.A_REVERSE)
+        except curses.error:
+            pass
         stdscr.nodelay(False)
         press = stdscr.getch()
         if press == KEY_Q_LOWER or press == KEY_Q_UPPER: return
