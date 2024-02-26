@@ -31,10 +31,14 @@ x_p, x_m, y_p, y_m = 0, 1, 2, 3
 
 def next_point(direction, point):
     x, y = point.x, point.y
-    if direction == x_p: x += 1
-    if direction == x_m: x -= 1
-    if direction == y_p: y += 1
-    if direction == y_m: y -= 1
+    if direction == x_p:
+        x += 1
+    if direction == x_m:
+        x -= 1
+    if direction == y_p:
+        y += 1
+    if direction == y_m:
+        y -= 1
     return Point(x, y)
 
 
@@ -152,8 +156,10 @@ class Snake:
         back = self.body[0]
         prev = self.body[1]
         x, y = back
-        if back.x == prev.x: y - 1
-        if back.y == prev.y: x - 1
+        if back.x == prev.x:
+            y - 1
+        if back.y == prev.y:
+            x - 1
         self.body.insert(0, Point(x, y))
 
 
@@ -178,8 +184,10 @@ class Toggle:
 
     def toggle(self):
         ni = self.ci + 1
-        if ni > self.li: self.ci = 0
-        else: self.ci = ni
+        if ni > self.li:
+            self.ci = 0
+        else:
+            self.ci = ni
 
 
 CH_APPLES = "+"
@@ -224,18 +232,28 @@ def main(stdscr):
             except curses.error:
                 pass
         press = stdscr.getch()
-        if press == curses.KEY_RESIZE: return
-        if press == KEY_SPACE: race.toggle()
-        if press == KEY_S_LOWER or press == KEY_S_UPPER: speed.toggle()
-        if press == KEY_Q_LOWER or press == KEY_Q_UPPER: return
+        if press == curses.KEY_RESIZE:
+            return
+        if press == KEY_SPACE:
+            race.toggle()
+        if press == KEY_S_LOWER or press == KEY_S_UPPER:
+            speed.toggle()
+        if press == KEY_Q_LOWER or press == KEY_Q_UPPER:
+            return
         if race.get():
-            if press == curses.KEY_UP: snake.set_direction(y_m)
-            if press == curses.KEY_DOWN: snake.set_direction(y_p)
-            if press == curses.KEY_LEFT: snake.set_direction(x_m)
-            if press == curses.KEY_RIGHT: snake.set_direction(x_p)
+            if press == curses.KEY_UP:
+                snake.set_direction(y_m)
+            if press == curses.KEY_DOWN:
+                snake.set_direction(y_p)
+            if press == curses.KEY_LEFT:
+                snake.set_direction(x_m)
+            if press == curses.KEY_RIGHT:
+                snake.set_direction(x_p)
             snake.move()
-        if snake.hit(): score += 1
-        if snake.crash(): break
+        if snake.hit():
+            score += 1
+        if snake.crash():
+            break
         timing = speed.get()
         # Időzítés korrekciója:
         if snake.direction == y_p or snake.direction == y_m:
@@ -251,7 +269,8 @@ def main(stdscr):
             pass
         stdscr.nodelay(False)
         press = stdscr.getch()
-        if press == KEY_Q_LOWER or press == KEY_Q_UPPER: return
+        if press == KEY_Q_LOWER or press == KEY_Q_UPPER:
+            return
 
 
 if __name__ == "__main__":
